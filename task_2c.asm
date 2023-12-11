@@ -10,21 +10,18 @@
 		jmp start
 
 .org 0x46
-start:	ldi r16, filler
-		ldi r17, final
+start:		ldi r16, filler
 
 		ldi xl, byte1(beginning_add)
 		ldi xh, byte2(beginning_add)
 
 
-
 next:
-		cp r17, r16
+		cp final, filler
 		brbs 0,theend
 
 write:	st	x+,r16
-		inc	r16
-		inc r16
+		add	filler, 2
 		jmp	next
 
 theend: jmp	theend

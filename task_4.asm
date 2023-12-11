@@ -1,10 +1,5 @@
-;
-; lab3.asm
-;
 ; Created: 22.11.2023 08:40:24
 ; Author : Ignacy Berent
-;
-; task 4
 
 .equ	ADR_C =0x0300
 .equ	ADR_D =0x0404
@@ -28,26 +23,26 @@ start:
 		ldi zh, high(array*2)
 
 load_array:
-		lpm r16, z+				;loads following numbers from array to register 16
-		cpi r16, 0xFF			; compares r16 with 0xFF
+		lpm r16, z+		;loads following numbers from array to register 16
+		cpi r16, 0xFF		; compares r16 with 0xFF
 		st x+, r16
-		brne load_array				;Branch if r16<>0xFF
+		brne load_array		;Branch if r16<>0xFF
 
 reset:
 		ldi xl, byte1(ADR_C)	; resets registers x to point to beginning of the array in data location
 		ldi xh, byte2(ADR_C)
 search:
-		ld r17, x+				;loads to register 17 data from location at x
+		ld r17, x+		;loads to register 17 data from location at x
 		cpi r17, 0xFF
-		brne load			;Branch if r17<>0xFF
+		brne load		;Branch if r17<>0xFF
 
-		ldi r17, 0xFF			;loads 0xFF pattern at the end of the array in program memory
+		ldi r17, 0xFF		;loads 0xFF pattern at the end of the array in program memory
 		st y+, r17
 		jmp theend
 
 load:
-		sbrc r17, 0				;checks last byte if is equal 0 - its even number so next instruction is skipped
-		st y+, r17				;saves number if odd
+		sbrc r17, 0		;checks last byte if is equal 0 - its even number so next instruction is skipped
+		st y+, r17		;saves number if odd
 		jmp search
 
 theend: jmp	theend

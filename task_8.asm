@@ -93,5 +93,3 @@ is_12:
 		ldi r17, m12
 		out portc, r17
 		jmp main_loop
-
-		;movw x, z!!!

@@ -1,4 +1,4 @@
-; Created: 10/01/2024 9:30:35 AM
+; Created: 12/13/2023 9:19:35 AM
 ; Author : Ignacy Berent
 ;
 
@@ -7,11 +7,11 @@
 .equ ADR = 0x400
 .equ stack_bottom = 0x500
 
-.equ number = 1
+.equ number = 239
 
-.equ hundres = 0
-.equ tens = 0
-.equ unities = 1
+.equ hundres = 2
+.equ tens = 3
+.equ unities = 9
 
 .cseg
 .org 0
@@ -59,11 +59,7 @@ check_10:
 	inc r21
 	jmp check_10
 check_1:
-	cpi r17, 0
-	breq end_bcd
-	dec r17
-	inc r22
-	jmp check_1
+	mov r22, r17
 end_bcd:
 	ret
 

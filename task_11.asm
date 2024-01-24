@@ -1,6 +1,7 @@
 ; Created: 1/10/2024 10:36:42 AM
 ; Author : Ignacy Berent
 
+
 .cseg
 .org 0x0
 
@@ -13,9 +14,9 @@
 rjmp start
 .org 0x46
 pressure_high_band: .db 96, 105, 115, 125, 135, 145, 165, 185, 254 , 0xFF
-messeges: .db 0b011111111, 0b00111111, 0b10011111, 0b110011111, 0b11101111, 0b11110011, 0b11111001, 0b11111100, 0b11111110, 0xFF
-buttons: .db 0x00, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0xFF
-values: .db 0, 15, 108, 120, 130, 140, 155, 170, 200, 0xFF
+messeges: .db 0b01111111, 0b00111111, 0b10011111, 0b110011111, 0b11101111, 0b11110011, 0b11111001, 0b11111100, 0b11111110, 0xFF
+buttons: .db 0x00, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x88, 0xFF
+values: .db 0, 80, 100, 110, 120, 130, 140, 155, 175, 200, 0xFF
 
 start:
 	ldi r20, 0
@@ -33,11 +34,13 @@ start:
 main_loop:
 	in r16, pinb
 	call set_value
+	cpi r16, 0
+	breq send_null
 	ldi counter, 0
 	ldi message, 0
 pressure_check:
 	call check_pressure
-	cpi message, 0x00
+	cpi message, 0
 	brne send_message
 	inc counter
 	cpi counter, 9
@@ -45,6 +48,10 @@ pressure_check:
 	jmp pressure_check
 send_message:
 	com message
+	out portc, message
+	jmp main_loop
+send_null:
+	ldi message, 0x00
 	out portc, message
 	jmp main_loop
 
@@ -62,10 +69,8 @@ check_pressure:
 		brlo set_message
 		ret
 	set_message:
-		ldi zl, low(messeges)
-		ldi zh, high(messeges)
-		ldi zl, low(pressure_high_band*2)
-		ldi zh, high(pressure_high_band*2)
+		ldi zl, low(messeges*2)
+		ldi zh, high(messeges*2)
 
 		add zl, counter
 		adc zh, r20		; r20=0 so it adds only C flag to higer register - case of overflow

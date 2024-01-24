@@ -1,0 +1,54 @@
+; Created: 1/24/2024 8:40:42 AM
+; Author : Ignacy Berent
+
+
+.cseg
+.org 0x0
+
+.equ stack_bottom = 0x500
+
+.def message=r21
+.def zero_r = r20
+
+rjmp start
+.org 0x46
+numbers: .db 0, 1, 15, 20, 40, 55, 70, 77, 80, 133, 140, 170, 189, 198, 230, 253, 0xFF
+
+start:
+
+stack_setup:
+	ldi zero_r, 0
+	ldi r16, low(stack_bottom)
+	out SPL, r16
+	ldi r16, high(stack_bottom)
+	out SPH, r16
+
+io_setup:
+	ldi r16, 0xFF
+	out ddrc, r16
+	ldi r16, 0xF0
+	out ddrb, r16
+
+
+main_loop:
+	in r16, pinb
+	call pick_number
+
+send_message:
+	com r17
+	out portc, r17
+	jmp main_loop
+
+
+
+.org 0x200
+
+pick_number:
+	ldi zl, low(numbers*2)
+	ldi zh, high(numbers*2)
+
+	add zl, r16
+	adc zh, zero_r
+
+	lpm r17, z
+	ret
